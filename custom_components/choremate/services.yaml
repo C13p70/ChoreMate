@@ -1,0 +1,31 @@
+
+assign_now:
+  name: Neue zufällige Zuweisung
+  description: Mischt Aufgaben für alle Personen und Tage und schreibt in die Sensoren.
+
+add_task:
+  name: Aufgabe hinzufügen
+  fields:
+    person:
+      example: Mama
+    day:
+      example: Montag
+    task:
+      example: Toilette wischen
+
+remove_task:
+  name: Aufgabe entfernen
+  fields:
+    person:
+      example: Lina
+    day:
+      example: Samstag
+    task:
+      example: Zimmer aufräumen
+
+list_tasks:
+  name: Aufgaben auflisten (Event)
+  description: Löst ein Event choremate_list_tasks mit den Tasks aus.
+  fields:
+    person: {}
+    day: {}
