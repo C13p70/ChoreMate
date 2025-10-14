@@ -1,7 +1,7 @@
 
 # 🧹 ChoreMate – Home Assistant Integration
 
-Eine einfache, lokale Aufgabenverwaltung ("Putzplan") für Home Assistant.
+Eine einfache, lokale Aufgabenverwaltung ("Putzplan xD ") für Home Assistant.
 Verteilt Haushaltsaufgaben zufällig auf Personen und Wochentage – mit eigener, kleinen Datenbank.
 
 ## ✨ Features
