@@ -4,8 +4,6 @@ from __future__ import annotations
 import logging
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.const import CONF_NAME
-from homeassistant.helpers import config_validation as cv
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,7 +56,7 @@ class ChoreMateConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input=None):
-        """Handle the initial step."""
+        """Handle the initial setup."""
         lang = _get_lang(self.hass)
         errors = {}
 
@@ -80,8 +78,9 @@ class ChoreMateConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=schema,
             errors=errors,
-            description_placeholders={"desc": _t(lang, "desc")},
+            description_placeholders={},  # leer lassen!
             title=_t(lang, "title"),
+            description=_t(lang, "desc"),
         )
 
     async def async_step_import(self, user_input=None):
@@ -113,5 +112,5 @@ class ChoreMateOptionsFlowHandler(config_entries.OptionsFlow):
             step_id="init",
             data_schema=schema,
             title=_t(lang, "title"),
-            description_placeholders={"desc": _t(lang, "desc")},
+            description=_t(lang, "desc"),
         )
