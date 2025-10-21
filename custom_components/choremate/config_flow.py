@@ -31,16 +31,14 @@ def _t(lang: str, key: str) -> str:
     """Simple translation system."""
     text = {
         "en": {
-            "title": "ChoreMate Setup",
-            "desc": "Configure your household chore distribution.",
+            "desc": "🧹 **ChoreMate Setup**\n\nConfigure your household chore distribution.",
             "persons": "Household members (comma-separated)",
             "tasks_per_day": "Tasks per person/day",
             "auto_enabled": "Enable automatic reassignment",
             "auto_interval": "Automatic reassignment every (days)",
         },
         "de": {
-            "title": "ChoreMate Einrichtung",
-            "desc": "Konfiguriere die Verteilung deiner Haushaltsaufgaben.",
+            "desc": "🧹 **ChoreMate Einrichtung**\n\nKonfiguriere die Verteilung deiner Haushaltsaufgaben.",
             "persons": "Haushaltsmitglieder (durch Komma getrennt)",
             "tasks_per_day": "Aufgaben pro Person/Tag",
             "auto_enabled": "Automatische Neuverteilung aktivieren",
@@ -78,8 +76,9 @@ class ChoreMateConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=schema,
             errors=errors,
-            description_placeholders={},  # leer lassen!
-            title=_t(lang, "title"),
+            description_placeholders={
+                "desc": _t(lang, "desc")
+            },
             description=_t(lang, "desc"),
         )
 
@@ -111,6 +110,6 @@ class ChoreMateOptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id="init",
             data_schema=schema,
-            title=_t(lang, "title"),
+            description_placeholders={"desc": _t(lang, "desc")},
             description=_t(lang, "desc"),
         )
