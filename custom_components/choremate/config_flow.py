@@ -31,14 +31,22 @@ def _t(lang: str, key: str) -> str:
     """Simple translation system."""
     text = {
         "en": {
-            "desc": "🧹 **ChoreMate Setup**\n\nConfigure your household chore distribution.",
+            "desc": (
+                "🧹 **ChoreMate Setup**\n\n"
+                "Configure your household chore distribution.\n\n"
+                "Fill in the fields below and confirm."
+            ),
             "persons": "Household members (comma-separated)",
             "tasks_per_day": "Tasks per person/day",
             "auto_enabled": "Enable automatic reassignment",
             "auto_interval": "Automatic reassignment every (days)",
         },
         "de": {
-            "desc": "🧹 **ChoreMate Einrichtung**\n\nKonfiguriere die Verteilung deiner Haushaltsaufgaben.",
+            "desc": (
+                "🧹 **ChoreMate Einrichtung**\n\n"
+                "Konfiguriere die Verteilung deiner Haushaltsaufgaben.\n\n"
+                "Fülle die Felder unten aus und bestätige."
+            ),
             "persons": "Haushaltsmitglieder (durch Komma getrennt)",
             "tasks_per_day": "Aufgaben pro Person/Tag",
             "auto_enabled": "Automatische Neuverteilung aktivieren",
@@ -72,6 +80,7 @@ class ChoreMateConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Required(CONF_AUTO_INTERVAL, default=DEFAULT_AUTO_INTERVAL): int,
         })
 
+        # Zeigt Text über der Form, kein title-Attribut nötig
         return self.async_show_form(
             step_id="user",
             data_schema=schema,
@@ -79,7 +88,6 @@ class ChoreMateConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             description_placeholders={
                 "desc": _t(lang, "desc")
             },
-            description=_t(lang, "desc"),
         )
 
     async def async_step_import(self, user_input=None):
@@ -111,5 +119,4 @@ class ChoreMateOptionsFlowHandler(config_entries.OptionsFlow):
             step_id="init",
             data_schema=schema,
             description_placeholders={"desc": _t(lang, "desc")},
-            description=_t(lang, "desc"),
         )
