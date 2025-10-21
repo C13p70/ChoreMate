@@ -6,8 +6,7 @@
   "issue_tracker": "https://github.com/C13p70/ChoreMate/issues",
   "requirements": [],
   "dependencies": [],
-  "codeowners": [
-    "@C13p70"
-  ],
+  "codeowners": ["@C13p70"],
+  "config_flow": true,
   "iot_class": "local_polling"
 }
