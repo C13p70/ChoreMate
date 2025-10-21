@@ -1,10 +1,9 @@
-
 """Config flow for ChoreMate integration."""
 from __future__ import annotations
+
 import logging
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.core import HomeAssistant
 from homeassistant.const import CONF_NAME
 from homeassistant.helpers import config_validation as cv
 
@@ -21,30 +20,36 @@ DEFAULT_TASKS_PER_DAY = 2
 DEFAULT_AUTO_ENABLED = True
 DEFAULT_AUTO_INTERVAL = 7
 
-# --- TRANSLATIONS ---
-TEXTS = {
-    "en": {
-        "title": "ChoreMate Setup",
-        "desc": "Configure your household chore distribution.",
-        "persons": "Household members (comma-separated)",
-        "tasks_per_day": "Tasks per person/day",
-        "auto_enabled": "Automatic reassignment enabled",
-        "auto_interval": "Automatic reassignment every (days)",
-    },
-    "de": {
-        "title": "ChoreMate Einrichtung",
-        "desc": "Konfiguriere die Verteilung deiner Haushaltsaufgaben.",
-        "persons": "Haushaltsmitglieder (durch Komma getrennt)",
-        "tasks_per_day": "Aufgaben pro Person/Tag",
-        "auto_enabled": "Automatische Neuverteilung aktivieren",
-        "auto_interval": "Automatische Neuverteilung alle (Tage)",
-    }
-}
 
-def get_text(lang: str, key: str) -> str:
-    if lang.startswith("de"):
-        return TEXTS["de"][key]
-    return TEXTS["en"][key]
+def _get_lang(hass):
+    """Try to detect UI language safely."""
+    try:
+        return getattr(hass.config, "language", "en")
+    except Exception:
+        return "en"
+
+
+def _t(lang: str, key: str) -> str:
+    """Simple translation system."""
+    text = {
+        "en": {
+            "title": "ChoreMate Setup",
+            "desc": "Configure your household chore distribution.",
+            "persons": "Household members (comma-separated)",
+            "tasks_per_day": "Tasks per person/day",
+            "auto_enabled": "Enable automatic reassignment",
+            "auto_interval": "Automatic reassignment every (days)",
+        },
+        "de": {
+            "title": "ChoreMate Einrichtung",
+            "desc": "Konfiguriere die Verteilung deiner Haushaltsaufgaben.",
+            "persons": "Haushaltsmitglieder (durch Komma getrennt)",
+            "tasks_per_day": "Aufgaben pro Person/Tag",
+            "auto_enabled": "Automatische Neuverteilung aktivieren",
+            "auto_interval": "Automatische Neuverteilung alle (Tage)",
+        },
+    }
+    return text["de" if lang.startswith("de") else "en"].get(key, key)
 
 
 class ChoreMateConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -54,7 +59,7 @@ class ChoreMateConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input=None):
         """Handle the initial step."""
-        lang = self.hass.config.language
+        lang = _get_lang(self.hass)
         errors = {}
 
         if user_input is not None:
@@ -64,7 +69,7 @@ class ChoreMateConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             else:
                 return self.async_create_entry(title="ChoreMate", data=user_input)
 
-        data_schema = vol.Schema({
+        schema = vol.Schema({
             vol.Required(CONF_PERSONS): str,
             vol.Required(CONF_TASKS_PER_DAY, default=DEFAULT_TASKS_PER_DAY): int,
             vol.Required(CONF_AUTO_ENABLED, default=DEFAULT_AUTO_ENABLED): bool,
@@ -73,16 +78,14 @@ class ChoreMateConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="user",
-            data_schema=data_schema,
+            data_schema=schema,
             errors=errors,
-            description_placeholders={
-                "desc": get_text(lang, "desc")
-            },
-            title=get_text(lang, "title")
+            description_placeholders={"desc": _t(lang, "desc")},
+            title=_t(lang, "title"),
         )
 
     async def async_step_import(self, user_input=None):
-        """Support import from configuration.yaml."""
+        """Handle import from configuration.yaml."""
         return await self.async_step_user(user_input)
 
 
@@ -90,17 +93,16 @@ class ChoreMateOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options for ChoreMate."""
 
     def __init__(self, config_entry: config_entries.ConfigEntry):
-        """Initialize options flow."""
         self.config_entry = config_entry
 
     async def async_step_init(self, user_input=None):
         """Manage options."""
-        lang = self.hass.config.language
+        lang = _get_lang(self.hass)
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
         options = self.config_entry.options
-        data_schema = vol.Schema({
+        schema = vol.Schema({
             vol.Required(CONF_PERSONS, default=options.get(CONF_PERSONS, "")): str,
             vol.Required(CONF_TASKS_PER_DAY, default=options.get(CONF_TASKS_PER_DAY, DEFAULT_TASKS_PER_DAY)): int,
             vol.Required(CONF_AUTO_ENABLED, default=options.get(CONF_AUTO_ENABLED, DEFAULT_AUTO_ENABLED)): bool,
@@ -109,7 +111,7 @@ class ChoreMateOptionsFlowHandler(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="init",
-            data_schema=data_schema,
-            title=get_text(lang, "title"),
-            description_placeholders={"desc": get_text(lang, "desc")}
+            data_schema=schema,
+            title=_t(lang, "title"),
+            description_placeholders={"desc": _t(lang, "desc")},
         )
